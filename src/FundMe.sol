@@ -7,19 +7,25 @@ import {PriceConverter} from "./PriceConverter.sol";
 error FundMe__NotOwner();
 
 contract FundMe {
+    // Type Declarations
     using PriceConverter for uint256;
 
-    mapping(address => uint256) public s_addressToAmountFunded;
-    address[] public s_funders;
-
-    // Could we make this constant?  /* hint: no! We should make it immutable! */
+    // State variables
     address public immutable i_owner;
     uint256 public constant MINIMUM_USD = 5 * 10 ** 18;
+    mapping(address => uint256) public s_addressToAmountFunded;
+    address[] public s_funders;
     AggregatorV3Interface private s_priceFeed;
 
+    modifier onlyOwner() {
+        // require(msg.sender == owner);
+        if (msg.sender != i_owner) revert FundMe__NotOwner();
+        _;
+    }
+
     constructor(address priceFeed) {
-        i_owner = msg.sender;
         s_priceFeed = AggregatorV3Interface(priceFeed);
+        i_owner = msg.sender;
     }
 
     function fund() public payable {
@@ -34,12 +40,6 @@ contract FundMe {
 
     function getVersion() public view returns (uint256) {
         return s_priceFeed.version();
-    }
-
-    modifier onlyOwner() {
-        // require(msg.sender == owner);
-        if (msg.sender != i_owner) revert FundMe__NotOwner();
-        _;
     }
 
     function cheaperWithdraw() public onlyOwner {
