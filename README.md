@@ -1,4 +1,1 @@
-1. Proper README
-2. Integration tests
-3. Programatic verification
-4. Push to Github
+https://github.com/Cyfrin/foundry-full-course-f23#lesson-7-foundry-fund-me
